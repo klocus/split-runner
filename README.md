@@ -1,2 +1,2 @@
-# split-runner
-HTML5 Game - endless runner
+# Split Runner
+Simple HTML5 endless runner based on Quintus Engine.
