@@ -2,7 +2,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #2ccc72;
+    background-color: #09b0e5;
     box-shadow: inset 0px -10px 100px 0px rgba(0,0,0,.4);
     font-family: 'Lato';
     transition: background-color 1s;
@@ -23,7 +23,7 @@ body {
         padding: 10px;
         border: 2px solid #fff;
         text-align: center;
-        color: #2ccc72;
+        color: #09b0e5;
     }
         #loading .container .progress {
             position: absolute;

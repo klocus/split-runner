@@ -32,11 +32,11 @@ Q.input.keyboardControls({
 
 // Kolory tła
 Q.COLORS = {
-    green:  { hex: "#2ccc72", score: 0   },
-    blue:   { hex: "#09b0e5", score: 100 },
+    blue:   { hex: "#09b0e5", score: 0   },
+    green:  { hex: "#2ccc72", score: 100 },
     yellow: { hex: "#f7ca17", score: 200 },
-    orange: { hex: "#f96a0e", score: 300 },
-    red:    { hex: "#ef4836", score: 400 }
+    orange: { hex: "#f96a0e", score: 400 },
+    red:    { hex: "#ef4836", score: 800 }
 };
 
 Q.SPRITE_PLAYER = 1;

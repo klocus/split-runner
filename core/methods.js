@@ -9,20 +9,16 @@ Quintus.GameMethods = function(Q)
 
     Q.score2color = function(score)
     {
-        var array = Object.keys(Q.COLORS).map(function (key)
-        {
-            return Q.COLORS[key]["score"]; 
-        });
-
-        var closest = Math.min.apply(null, array);
-
-        for(var i = 0; i < array.length; i++)
-        {
-            if(array[i] <= score && array[i] > closest)
-                closest = array[i];
-        }
-
-        return Object.keys(Q.COLORS).find(key => Q.COLORS[key]["score"] === closest);
+        if(score < Q.COLORS["green"]["score"])
+            return "blue";
+        else if(score >= Q.COLORS["green"]["score"] && score < Q.COLORS["yellow"]["score"])
+            return "green";
+        else if(score >= Q.COLORS["yellow"]["score"] && score < Q.COLORS["orange"]["score"])
+            return "yellow";
+        else if(score >= Q.COLORS["orange"]["score"] && score < Q.COLORS["red"]["score"])
+            return "orange";
+        else
+            return "red";
     }
 
     Q.random = function(min, max)

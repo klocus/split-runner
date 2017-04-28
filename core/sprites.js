@@ -72,7 +72,7 @@ Q.Sprite.extend("Player",
         if(Q.state.get("lives") > 0)
         {
             Q.state.dec("lives", 1);
-            this.p.x -= 500;
+            this.p.x -= 200;
         }
     },
 
@@ -142,7 +142,7 @@ Q.Sprite.extend("Floor",
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width)
+            if(player.p.x > this.p.x + Q.width + 200)
                 this.destroy();
         }
     },
@@ -175,10 +175,15 @@ Q.Sprite.extend("LittleObstacle",
     },
 
     step: function(dt) {
+        // Zmiana wartości "y", gdy obiekt jest obrócony
+        if(this.p.flip == "y")
+            this.p.y = 540; 
+
+        // Usunięcie obiektu, gdy jest poza ekranem
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width)
+            if(player.p.x > this.p.x + Q.width + 200)
                 this.destroy();
         }
     },
@@ -203,17 +208,22 @@ Q.Sprite.extend("BigObstacle",
             points: [ [80, 120], [-80, 120], [-12, -130] ],
             vx: 0,
             vy: 0,
-            ay: 0
+            ay: 0,
         });
 
         this.on("hit");
     },
 
     step: function(dt) {
+        // Zmiana wartości "y", gdy obiekt jest obrócony
+        if(this.p.flip == "y")
+            this.p.y = 629; 
+
+        // Usunięcie obiektu, gdy jest poza ekranem
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width)
+            if(player.p.x > this.p.x + Q.width + 200)
                 this.destroy();
         }
     },
@@ -230,25 +240,89 @@ Q.Sprite.extend("BigObstacle",
 
 Q.GameObject.extend("ObstacleGenerator",
 {
-    init: function() {
+    init: function()
+    {
         this.p = {
-            launchDelay: 0.1,
+            launchDelay: 0.45,
             launchRandom: 1,
             launch: 0,
-            lastObstacle: Q("Floor").last()
+            obstacles: {
+                last: Q("Floor").last(),
+                big: 0,
+                little: 0,
+                bigFlip: 0,
+                littleFlip: 0
+            }
         }
     },
 
-    update: function(dt) {
+    update: function(dt)
+    {
         this.p.launch -= dt;
 
         var obstacleArray = [Q.LittleObstacle, Q.BigObstacle, Q.Floor];
         var obstacleRandom = obstacleArray[Math.floor(Math.random() * obstacleArray.length)];
+        var flipRandom = Math.floor(Math.random() * 2);                // 0 = false, 1 = true
 
-        if(this.p.launch < 0) {
-            var obstacle = new obstacleRandom({x: this.p.lastObstacle.p.x + this.p.lastObstacle.p.cx});
-            obstacle.p.x += obstacle.p.cx;
-            this.p.lastObstacle = this.stage.insert(obstacle);
+        if(this.p.launch < 0 && Q("Player").length > 0)
+        {
+            // Policzenie przeszkód od czasu wygenerowania podłogi
+            if(this.p.obstacles.last.isA("BigObstacle"))
+            {
+                if(this.p.obstacles.last.p.flip == "y")
+                    this.p.obstacles.bigFlip++;
+                else
+                    this.p.obstacles.big++; 
+            }
+            else if(this.p.obstacles.last.isA("LittleObstacle"))
+            {
+                if(this.p.obstacles.last.p.flip == "y")
+                    this.p.obstacles.littleFlip++;
+                else
+                    this.p.obstacles.little++; 
+            }
+            else
+            {
+                // Reset liczników po wygenerowaniu podłogi
+                this.p.obstacles.big = 0;
+                this.p.obstacles.little = 0;
+                this.p.obstacles.bigFlip = 0;
+                this.p.obstacles.littleFlip = 0;
+            }
+
+            // Przypisanie do zmiennej losową przeszkodę (w tym podłogę)
+            var obstacle = new obstacleRandom();
+
+            // Warunki, które uniemożliwiają grę i zmieniają przeszkodę na podłogę
+            if((this.p.obstacles.big + this.p.obstacles.bigFlip) > 2
+                || (this.p.obstacles.little + this.p.obstacles.littleFlip) > 3
+                || (this.p.obstacles.big + this.p.obstacles.bigFlip + this.p.obstacles.little + this.p.obstacles.littleFlip) >= 3
+                || (obstacle.className == "BigObstacle" && (flipRandom < 1) && (this.p.obstacles.bigFlip + this.p.obstacles.littleFlip >= 1))
+                || (obstacle.className == "BigObstacle" && this.p.obstacles.last.className == "BigObstacle" && this.p.obstacles.last.p.flip == "y"))
+            {
+                var obstacle = new Q.Floor();
+            }
+            else
+            {
+                if(flipRandom > 0)
+                {
+                    // Warunki, które sprawdzają czy przeszkoda może zostać obrócona do góry nogami
+                    if(!(obstacle.className == "BigObstacle" && (this.p.obstacles.last.className == "BigObstacle"))
+                        && !(obstacle.className == "BigObstacle" && (this.p.obstacles.big + this.p.obstacles.little >= 2))
+                        && !(obstacle.className == "BigObstacle" && (this.p.obstacles.big + this.p.obstacles.littleFlip >= 2)))
+                    {
+                        obstacle.p.flip = "y";   
+                    }
+                }
+            }
+
+            // Ustawienie pozycji przeszkody
+            obstacle.p.x += this.p.obstacles.last.p.x + this.p.obstacles.last.p.cx + obstacle.p.cx;
+
+            // Dodanie przeszkody na scenę
+            this.p.obstacles.last = this.stage.insert(obstacle);
+
+            // Definicja opóźnienia ponownego generowania
             this.p.launch = this.p.launchDelay;
         }
     }
