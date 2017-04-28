@@ -50,7 +50,7 @@ Q.SPRITE_OBSTACLE = 8;
 // LOAD & LUNCH
 // =============================================================================
 
-Q.load("player.json, player.png, background-wall.png, floor.png, big-obstacle.png, little-obstacle.png, fire.mp3, jump.mp3, heart.mp3, hit.mp3, coin.mp3", function()
+Q.load("player.json, player.png, floor.png, big-obstacle.png, little-obstacle.png, fire.mp3, jump.mp3, heart.mp3, hit.mp3, coin.mp3", function()
 {
     Q.compileSheets("player.png","player.json");
 
