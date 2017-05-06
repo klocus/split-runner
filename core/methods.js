@@ -21,6 +21,11 @@ Quintus.GameMethods = function(Q)
             return "red";
     }
 
+    Q.color2speed = function(color)
+    {
+        return Q.COLORS[color]["speed"];  
+    }
+
     Q.random = function(min, max)
     {
         return min + Math.random() * (max - min);

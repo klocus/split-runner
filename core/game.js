@@ -19,7 +19,7 @@ var Q = window.Q = Quintus({audioSupported: [ "mp3" ]})
         .touch()
         .enableSound();
 
-// Klawisze i akcje
+// Keys and actions
 Q.input.keyboardControls({
     RIGHT:  "right",
     UP:     "turn_up",
@@ -30,13 +30,13 @@ Q.input.keyboardControls({
 });
 
 
-// Kolory tła
+// Background colors
 Q.COLORS = {
-    blue:   { hex: "#09b0e5", score: 0   },
-    green:  { hex: "#2ccc72", score: 100 },
-    yellow: { hex: "#f7ca17", score: 200 },
-    orange: { hex: "#f96a0e", score: 400 },
-    red:    { hex: "#ef4836", score: 800 }
+    blue:   { hex: "#09b0e5", speed: 500, score: 0   },
+    green:  { hex: "#2ccc72", speed: 550, score: 100 },
+    yellow: { hex: "#f7ca17", speed: 600, score: 200 },
+    orange: { hex: "#f96a0e", speed: 650, score: 400 },
+    red:    { hex: "#ef4836", speed: 700, score: 800 }
 };
 
 Q.SPRITE_PLAYER = 1;
@@ -50,10 +50,13 @@ Q.SPRITE_OBSTACLE = 8;
 // LOAD & LUNCH
 // =============================================================================
 
-Q.load("player.json, player.png, floor.png, big-obstacle.png, little-obstacle.png, fire.mp3, jump.mp3, heart.mp3, hit.mp3, coin.mp3", function()
+Q.load("player.json, player.png, floor.png, big-obstacle.png, little-obstacle.png, logo.png, fire.mp3, jump.mp3, heart.mp3, hit.mp3, coin.mp3, loop.mp3",
+function()
 {
-    Q.compileSheets("player.png","player.json");
+    // Player sprite sheet
+    Q.compileSheets("player.png", "player.json");
 
+    // Player animations
     Q.animations("player", {
         walk_upper: { frames: [4, 5, 6, 7], rate: 1/10, flip: false, loop: true },
         walk_bottom: { frames: [4, 5, 6, 7], rate: 1/10, flip: "y", loop: true },
@@ -63,6 +66,7 @@ Q.load("player.json, player.png, floor.png, big-obstacle.png, little-obstacle.pn
         duck: { frames: [15], rate: 1/10, flip: false },
     });
 
+    // Load default scene
     Q.stageScene("menu");
 
     Q.debug = false;

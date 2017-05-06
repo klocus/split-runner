@@ -6,31 +6,62 @@ Quintus.GameScenes = function(Q) {
 
 Q.scene("menu", function(stage)
 {
+    // Background color
+    Q.bgcolor("blue");
+
+    // Insert container
     var container = stage.insert(new Q.UI.Container({
-        x: Q.width/2, y: Q.height/2, fill: "rgba(0, 0, 0, .3)"
+        x: Q.width/2, y: Q.height/2 + 110, fill: "rgba(0, 0, 0, 0)"
     }));
 
-    var button = container.insert(new Q.UI.Button({ 
+    // Insert start button
+    var startButton = container.insert(new Q.UI.Button({ 
         x: 0, y: 0, fill: "white", label: "Start Game", font: "400 24px Lato"
     }));
 
+    // Insert music button
+    if(Q.state.get("music") === undefined) Q.state.set("music", true);
+    var musicButton = container.insert(new Q.UI.Button({ 
+        x: 0, y: 15 + startButton.p.h, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 14px Lato"
+    }));
+
+    // Insert logo
+    var logo = container.insert(new Q.UI.Button({ 
+        x: 0, y: -110 - startButton.p.h, asset: "logo.png"
+    }));
+
     var label = container.insert(new Q.UI.Text({
-        x: 0, y: -10 - button.p.h, label: "Split Runner", family: "Lato", color: "white"
+        x: 0, y: -10 - startButton.p.h, label: "[____] — Jump      ⇧ / ⇩ — Flip",
+        weight: 400, family: "Lato", size: 16, color: "white"
     }));
 
     // Load game level on click
-    button.on("click", function() {
+    startButton.on("click", function() {
         Q.clearStages();
         Q.stageScene("level");
     });
 
     // Load game level on key down
     Q.input.on("up", function() {
-        if(!Q.state.get("lives"))
-            button.trigger("click");
+        if(Q.stage().scene.name == "menu")
+            startButton.trigger("click");
     });
 
-    container.fit(20);
+    // Change music option
+    musicButton.on("click", function() {
+        if(musicButton.p.label.includes("ON"))
+        {
+            Q.state.set("music", false);
+            musicButton.p.label = "Music: OFF";
+        }
+        else
+        {
+            Q.state.set("music", true);
+            musicButton.p.label = "Music: ON";
+        }
+    });
+
+    container.fit(0);
 });
 
 // =============================================================================
@@ -39,28 +70,32 @@ Q.scene("menu", function(stage)
 
 Q.scene("level", function(stage)
 {
-    // Kolor tła
-    Q.bgcolor("green");
+    // Default values of state
+    Q.state.reset({ score: 0, lives: 3, music: Q.state.get("music") });
 
-    // Początkowa wartość statystyk
-    Q.state.reset({ score: 0, lives: 3 });
+    // Music
+    if(Q.state.get("music"))
+        Q.audio.play("loop.mp3", { loop: true, volume: 0.4 });
 
-    // Wyświetlenie sceny ze statystykami
+    // Display HUD
     Q.stageScene("hud", 2);
 
-    // Wygenerowanie podłogi na rozbieg
+    // Generate floor to run
     for (var i = 0; i < 5; i++)
     { 
         stage.insert(new Q.Floor({x: -660 + 390*i}));
     }
 
-    // Przeszkody
+    // Generate bstacles
     stage.insert(new Q.ObstacleGenerator());
 
-    // Gracz
+    // Player
     var player = stage.insert(new Q.Player());
-    var test = stage.add("viewport").follow(player);
+    
+    // Follow the player
+    stage.add("viewport").follow(player);
     stage.viewport.offsetY = 100;
+    stage.viewport.offsetX = -300;
 });
 
 // =============================================================================
@@ -74,20 +109,23 @@ Q.scene("hud", function(stage)
         x: 50, y: 0
     }));
 
+    // Insert text with score value
     var score = container.insert(new Q.UI.Text({
         x: 50, y: 50, label: "SCORE: " + Q.state.get("score"), color: "white", family: "Lato"
     }));
 
+    // Generate hearts
     for(i = 0; i < Q.state.get("lives"); i++)
     {
         hearts += "♥ ";
     }
 
+    // Insert hearts
     var lives = container.insert(new Q.UI.Text({
         x: 50, y: 80, label: hearts, color: "white", size: 44, family: "Lato"
     }));
 
-    // Dopasowanie zawartości do rozmiaru kontenera + 20 jednostek marginesu
+    // Match content to container size + 20 margin units
     container.fit(20);
 });
 
@@ -97,31 +135,43 @@ Q.scene("hud", function(stage)
 
 Q.scene("endGame", function(stage)
 {
+    Q.audio.stop();
+
     var container = stage.insert(new Q.UI.Container({
         x: Q.width/2, y: Q.height/2, fill: "rgba(0, 0, 0, .3)"
     }));
 
-    var button = container.insert(new Q.UI.Button({ 
+    var restartButton = container.insert(new Q.UI.Button({ 
         x: 0, y: 0, fill: "white", label: "Play Again", font: "400 24px Lato"
     }));
 
-    var label = container.insert(new Q.UI.Text({
-        x: 0, y: -10 - button.p.h, label: stage.options.label, family: "Lato", color: "white"
+    var menuButton = container.insert(new Q.UI.Button({ 
+        x: 0, y: 10 + restartButton.p.h, fill: "white", label: "Main Menu", font: "400 14px Lato"
     }));
 
-    // Load game level on click
-    button.on("click", function() {
+    var label = container.insert(new Q.UI.Text({
+        x: 0, y: -10 - restartButton.p.h, label: stage.options.label, family: "Lato", color: "white"
+    }));
+
+    // Reload game level on click
+    restartButton.on("click", function() {
         Q.clearStages();
         Q.stageScene("level");
     });
 
-    // Load game level on key down
+    // Reload game level on key down
     Q.input.on("up", function() {
         if(!Q.state.get("lives"))
-            button.trigger("click");
+            restartButton.trigger("click");
     });
 
-    // Dopasowanie zawartości do rozmiaru kontenera + 20 jednostek marginesu
+    // Load game menu on click
+    menuButton.on("click", function() {
+        Q.clearStages();
+        Q.stageScene("menu");
+    });
+
+    // Match content to container size + 20 margin units
     container.fit(20);
 });
 

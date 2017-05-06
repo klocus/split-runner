@@ -23,26 +23,21 @@ Q.Sprite.extend("Player",
             side: "upper"
         });
 
-        // Moduły
+        // Modules
         this.add("2d, animation, platformerControls");
 
-        // Akcje
-        Q.input.on("right", this, "countScore");
-        Q.input.on("up", this, "jump");                                 // skok
-        Q.input.on("turn_up", this, "turnUp");                          // zmiana pozycji na górę
-        Q.input.on("turn_down", this, "turnDown");                      // zmiana pozycji na dół
-        this.on("floor.hit", this, "floorHit");                         // kontakt z podłożem
-        this.on("obstacle.hit", this, "obstacleHit");                   // kontakt z przeszkodą
-    },
-
-    countScore: function() {
-        
+        // Actions
+        Q.input.on("up", this, "jump");                                 // jump
+        Q.input.on("turn_up", this, "turnUp");                          // flip up
+        Q.input.on("turn_down", this, "turnDown");                      // flip down
+        this.on("floor.hit", this, "floorHit");                         // collision with floor
+        this.on("obstacle.hit", this, "obstacleHit");                   // collistion with obstacle
     },
 
     jump: function(dt) {
         if(this.p.landed > 0)
         {
-            Q.audio.play("jump.mp3");
+            Q.audio.play("jump.mp3", {debounce: 600});
         }
     },
 
@@ -77,10 +72,10 @@ Q.Sprite.extend("Player",
     },
 
     step: function(dt) {
-        // Wymuszenie biegu w prawo
+        // Force the run to the right
         Q.inputs["right"] = true;
 
-        // Skok podczas dolnej pozycji
+        // Jump while upside down
         if(this.p.side == "bottom")
         {
             if((this.p.landed > 0) && !this.p.jumping && Q.inputs["up"])
@@ -97,22 +92,26 @@ Q.Sprite.extend("Player",
             }
         }
 
-        // Animacje
+        // Animations
         if(this.p.landed > 0)
-            this.play("walk_" + this.p.side);                          // animacja chodzenia
+            this.play("walk_" + this.p.side);                          // walking
         else
-            this.play("jump_" + this.p.side);                          // animacja skoku
+            this.play("jump_" + this.p.side);                          // jumping
 
-        // Wynik
+        // Score
         Q.state.set("score", Math.round(this.p.x/100));
         Q.stageScene("hud", 2);
-        Q.bgcolor(Q.score2color(Q.state.get("score")));
 
-        // Zakończenie gry
+        // Get BG Color
+        this.p.bgcolor = Q.score2color(Q.state.get("score"));           // score to color
+        Q.bgcolor(this.p.bgcolor);                                      // set bg color
+        this.p.speed = Q.color2speed(this.p.bgcolor);                   // set character speed
+
+        // End of game
         if((this.p.y > Q.height*1.5) || (this.p.y < -Q.height) || !Q.state.get("lives"))
         {
-            this.destroy();                                             // usunięcie postaci
-            Q.stageScene("endGame", 1, { label: "You Lose!" });         // załadownie nowej sceny
+            this.destroy();                                             // character removal
+            Q.stageScene("endGame", 1, { label: "You Lose!" });         // load new scene
         }
 
         //this.stage.viewport.centerOn(this.p.x + 300, 400 );
@@ -175,11 +174,11 @@ Q.Sprite.extend("LittleObstacle",
     },
 
     step: function(dt) {
-        // Zmiana wartości "y", gdy obiekt jest obrócony
+        // Change the "y" value when the object is rotated
         if(this.p.flip == "y")
             this.p.y = 540; 
 
-        // Usunięcie obiektu, gdy jest poza ekranem
+        // Remove an object when it is off the screen
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
@@ -215,11 +214,11 @@ Q.Sprite.extend("BigObstacle",
     },
 
     step: function(dt) {
-        // Zmiana wartości "y", gdy obiekt jest obrócony
+        // Change the "y" value when the object is rotated
         if(this.p.flip == "y")
             this.p.y = 629; 
 
-        // Usunięcie obiektu, gdy jest poza ekranem
+        // Remove an object when it is off the screen
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
@@ -244,7 +243,6 @@ Q.GameObject.extend("ObstacleGenerator",
     {
         this.p = {
             launchDelay: 0.45,
-            launchRandom: 1,
             launch: 0,
             obstacles: {
                 last: Q("Floor").last(),
@@ -266,7 +264,7 @@ Q.GameObject.extend("ObstacleGenerator",
 
         if(this.p.launch < 0 && Q("Player").length > 0)
         {
-            // Policzenie przeszkód od czasu wygenerowania podłogi
+            // Calculate the number of obstacles from the time the floor was generated
             if(this.p.obstacles.last.isA("BigObstacle"))
             {
                 if(this.p.obstacles.last.p.flip == "y")
@@ -283,17 +281,17 @@ Q.GameObject.extend("ObstacleGenerator",
             }
             else
             {
-                // Reset liczników po wygenerowaniu podłogi
+                // Reset counters after floor generation
                 this.p.obstacles.big = 0;
                 this.p.obstacles.little = 0;
                 this.p.obstacles.bigFlip = 0;
                 this.p.obstacles.littleFlip = 0;
             }
 
-            // Przypisanie do zmiennej losową przeszkodę (w tym podłogę)
+            // Assigning to a variable an random obstacle (including the floor)
             var obstacle = new obstacleRandom();
 
-            // Warunki, które uniemożliwiają grę i zmieniają przeszkodę na podłogę
+            // Conditions that prevent the game and change the obstacle to the floor
             if((this.p.obstacles.big + this.p.obstacles.bigFlip) > 2
                 || (this.p.obstacles.little + this.p.obstacles.littleFlip) > 3
                 || (this.p.obstacles.big + this.p.obstacles.bigFlip + this.p.obstacles.little + this.p.obstacles.littleFlip) >= 3
@@ -306,7 +304,7 @@ Q.GameObject.extend("ObstacleGenerator",
             {
                 if(flipRandom > 0)
                 {
-                    // Warunki, które sprawdzają czy przeszkoda może zostać obrócona do góry nogami
+                    // Conditions that check whether an obstacle can be turned upside down
                     if(!(obstacle.className == "BigObstacle" && (this.p.obstacles.last.className == "BigObstacle"))
                         && !(obstacle.className == "BigObstacle" && (this.p.obstacles.big + this.p.obstacles.little >= 2))
                         && !(obstacle.className == "BigObstacle" && (this.p.obstacles.big + this.p.obstacles.littleFlip >= 2)))
@@ -316,14 +314,17 @@ Q.GameObject.extend("ObstacleGenerator",
                 }
             }
 
-            // Ustawienie pozycji przeszkody
+            // Setting the obstacle position
             obstacle.p.x += this.p.obstacles.last.p.x + this.p.obstacles.last.p.cx + obstacle.p.cx;
 
-            // Dodanie przeszkody na scenę
+            // Adding an obstacle to the scene
             this.p.obstacles.last = this.stage.insert(obstacle);
 
-            // Definicja opóźnienia ponownego generowania
-            this.p.launch = this.p.launchDelay;
+            // Definition of delayed re-generation
+            if(this.p.obstacles.last.className == "LittleObstacle")
+                this.p.launch = 0.1;
+            else    
+                this.p.launch = this.p.launchDelay;
         }
     }
 });
