@@ -50,7 +50,7 @@ Q.SPRITE_OBSTACLE = 8;
 // LOAD & LUNCH
 // =============================================================================
 
-Q.load("player.json, player.png, floor.png, big-obstacle.png, little-obstacle.png, logo.png, loop.mp3, jump.mp3",
+Q.load("player.json, player.png, big-obstacle.png, little-obstacle.png, logo.png, loop.mp3, jump.mp3, flip.mp3",
 function()
 {
     // Player sprite sheet

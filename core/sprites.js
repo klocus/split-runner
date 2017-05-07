@@ -44,18 +44,22 @@ Q.Sprite.extend("Player",
     turnUp: function() {
         if((this.p.landed > 0) && (this.p.side == "bottom"))
         {
+            Q.audio.play("flip.mp3");
             this.p.side = "upper"
             this.p.gravity = 1;
             this.p.y = 380;
+            this.p.points = [ [50, 100], [-23, 100], [-23, -108], [50, -108] ];
         }
     },
 
     turnDown: function() {
         if((this.p.landed > 0) && (this.p.side == "upper"))
         {
+            Q.audio.play("flip.mp3");
             this.p.side = "bottom";
             this.p.gravity = -1;
             this.p.y = 630;
+            this.p.points = [ [50, -100], [-23, -100], [-23, 108], [50, 108] ];
         }
     },
 
@@ -64,10 +68,10 @@ Q.Sprite.extend("Player",
     },
 
     obstacleHit: function(data) {
+        Q.state.dec("lives", 1);
         if(Q.state.get("lives") > 0)
         {
-            Q.state.dec("lives", 1);
-            this.p.x -= 200;
+            this.p.x = (Q("Floor").at(2).p.x - Q("Floor").at(2).p.cx);
         }
     },
 
@@ -108,7 +112,7 @@ Q.Sprite.extend("Player",
         this.p.speed = Q.color2speed(this.p.bgcolor);                   // set character speed
 
         // End of game
-        if((this.p.y > Q.height*1.5) || (this.p.y < -Q.height) || !Q.state.get("lives"))
+        if((this.p.y > Q.height*1.5) || (this.p.y < -Q.height) || (Q.state.get("lives") <= 0))
         {
             this.destroy();                                             // character removal
             Q.stageScene("endGame", 1, { label: "You Lose!" });         // load new scene
@@ -127,21 +131,24 @@ Q.Sprite.extend("Floor",
     init: function(p) {
         this._super(p, {
             y: 500,
-            type: Q.SPRITE_FLOOR,
-            asset: "floor.png",
-            vx: 0,
-            vy: 0,
-            ay: 0
+            w: 390,
+            h: 21,
+            type: Q.SPRITE_FLOOR
         });
 
         this.on("hit");
+    },
+
+    draw: function(ctx) {
+        ctx.fillStyle = "#FFF";
+        ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
     },
 
     step: function(dt) {
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width + 200)
+            if(player.p.x > this.p.x + Q.width + 600)
                 this.destroy();
         }
     },
@@ -174,15 +181,18 @@ Q.Sprite.extend("LittleObstacle",
     },
 
     step: function(dt) {
-        // Change the "y" value when the object is rotated
+        // Change the "y" and "points" when the object is rotated
         if(this.p.flip == "y")
+        {
             this.p.y = 540; 
+            this.p.points = [ [40, -30], [-40, -30], [-7, 40] ];
+        }
 
         // Remove an object when it is off the screen
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width + 200)
+            if(player.p.x > this.p.x + Q.width + 600)
                 this.destroy();
         }
     },
@@ -214,15 +224,18 @@ Q.Sprite.extend("BigObstacle",
     },
 
     step: function(dt) {
-        // Change the "y" value when the object is rotated
+        // Change the "y" and "points" when the object is rotated
         if(this.p.flip == "y")
+        {
             this.p.y = 629; 
+            this.p.points = [ [80, -120], [-80, -120], [-12, 130] ];
+        }
 
         // Remove an object when it is off the screen
         var player = Q("Player").first();
         if(typeof player !== "undefined")
         {
-            if(player.p.x > this.p.x + Q.width + 200)
+            if(player.p.x > this.p.x + Q.width + 600)
                 this.destroy();
         }
     },
