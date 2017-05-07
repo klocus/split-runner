@@ -22,7 +22,7 @@ Q.scene("menu", function(stage)
     // Insert music button
     if(Q.state.get("music") === undefined) Q.state.set("music", true);
     var musicButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 15 + startButton.p.h, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 14px Lato"
+        x: 0, y: 15 + startButton.p.h, w: startButton.p.w, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 14px Lato"
     }));
 
     // Insert logo
@@ -146,7 +146,7 @@ Q.scene("endGame", function(stage)
     }));
 
     var menuButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 10 + restartButton.p.h, fill: "white", label: "Main Menu", font: "400 14px Lato"
+        x: 0, y: 10 + restartButton.p.h, w: restartButton.p.w, fill: "white", label: "Main Menu", font: "400 14px Lato"
     }));
 
     var label = container.insert(new Q.UI.Text({
