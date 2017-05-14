@@ -22,17 +22,12 @@ Q.scene("menu", function(stage)
     // Insert music button
     if(Q.state.get("music") === undefined) Q.state.set("music", true);
     var musicButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 15 + startButton.p.h, w: startButton.p.w, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 14px Lato"
+        x: 0, y: 15 + startButton.p.h, w: startButton.p.w, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 24px Lato"
     }));
 
     // Insert logo
     var logo = container.insert(new Q.UI.Button({ 
         x: 0, y: -110 - startButton.p.h, asset: "logo.png"
-    }));
-
-    var label = container.insert(new Q.UI.Text({
-        x: 0, y: -10 - startButton.p.h, label: "[____] — Jump      ⇧ / ⇩ — Flip",
-        weight: 400, family: "Lato", size: 16, color: "white"
     }));
 
     // Load game level on click
@@ -70,8 +65,11 @@ Q.scene("menu", function(stage)
 
 Q.scene("level", function(stage)
 {
+    // Get best score
+    var record = localStorage.getItem("record") ? localStorage.getItem("record") : 0;
+
     // Default values of state
-    Q.state.reset({ score: 0, lives: 3, music: Q.state.get("music") });
+    Q.state.reset({ score: 0, record: record, lives: 3, music: Q.state.get("music") });
 
     // Music
     if(Q.state.get("music"))
@@ -83,10 +81,17 @@ Q.scene("level", function(stage)
     // Generate floor to run
     for (var i = 0; i < 5; i++)
     { 
-        stage.insert(new Q.Floor({x: -660 + 390*i}));
+        var floor = new Q.Floor();
+        floor.p.x = -660 + floor.p.w * i;
+        stage.insert(floor);
     }
 
-    // Generate bstacles
+    // Display info about keys
+    var keysInfo = stage.insert(new Q.UI.Text({
+        x: 990, y: 390, label: "Use [⇧]  /  [⇩] to FLIP  and  [____] to JUMP.", color: "white", family: "Lato"
+    }));
+
+    // Generate obstacles
     stage.insert(new Q.ObstacleGenerator());
 
     // Player
@@ -105,12 +110,12 @@ Q.scene("level", function(stage)
 Q.scene("hud", function(stage)
 {
     var i, hearts = "";
-    var container = stage.insert(new Q.UI.Container({
+    var leftContainer = stage.insert(new Q.UI.Container({
         x: 50, y: 0
     }));
 
     // Insert text with score value
-    var score = container.insert(new Q.UI.Text({
+    var score = leftContainer.insert(new Q.UI.Text({
         x: 50, y: 50, label: "SCORE: " + Q.state.get("score"), color: "white", family: "Lato"
     }));
 
@@ -121,12 +126,26 @@ Q.scene("hud", function(stage)
     }
 
     // Insert hearts
-    var lives = container.insert(new Q.UI.Text({
+    var lives = leftContainer.insert(new Q.UI.Text({
         x: 50, y: 80, label: hearts, color: "white", size: 44, family: "Lato"
     }));
 
     // Match content to container size + 20 margin units
-    container.fit(20);
+    leftContainer.fit(20);
+
+    // Insert container at the top-right
+    var rightContainer = stage.insert(new Q.UI.Container({
+        x: Q.width - 170, y: 0
+    }));
+
+    // Insert best score
+    if(typeof(Storage) !== "undefined") {
+        var bestScore = rightContainer.insert(new Q.UI.Text({
+            x: 50, y: 50, label: "RECORD: " + Q.state.get("record"), color: "white", family: "Lato"
+        }));
+    }
+
+    rightContainer.fit(20);
 });
 
 // =============================================================================
@@ -146,7 +165,7 @@ Q.scene("endGame", function(stage)
     }));
 
     var menuButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 10 + restartButton.p.h, w: restartButton.p.w, fill: "white", label: "Main Menu", font: "400 14px Lato"
+        x: 0, y: 10 + restartButton.p.h, w: restartButton.p.w, fill: "white", label: "Main Menu", font: "400 22px Lato"
     }));
 
     var label = container.insert(new Q.UI.Text({
