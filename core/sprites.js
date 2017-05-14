@@ -124,7 +124,7 @@ Q.Sprite.extend("Player",
         this.p.speed = Q.color2speed(this.p.bgcolor);                   // set character speed
 
         // End of game
-        if((this.p.y > Q.height*1.5) || (this.p.y < -Q.height) || (Q.state.get("lives") <= 0))
+        if((this.p.y > Q.height*1.5) || (this.p.y < -Q.height*2) || (Q.state.get("lives") <= 0))
         {
             this.destroy();                                             // character removal
             Q.stageScene("endGame", 1, { label: "You Lose!" });         // load new scene
