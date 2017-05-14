@@ -53,6 +53,9 @@ Q.SPRITE_COLLECTABLE = 2;
 Q.SPRITE_FLOOR = 4;
 Q.SPRITE_OBSTACLE = 8;
 
+// Check if mobile
+Q.MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 //Q.gravityY = 2000;
   
 // =============================================================================
