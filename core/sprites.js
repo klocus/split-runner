@@ -30,6 +30,7 @@ Q.Sprite.extend("Player",
         Q.input.on("up", this, "jump");                                 // jump
         Q.input.on("turn_up", this, "turnUp");                          // flip up
         Q.input.on("turn_down", this, "turnDown");                      // flip down
+        Q.input.on("flip", this, "flip");                               // flip on mobile devices
         this.on("floor.hit", this, "floorHit");                         // collision with floor
         this.on("obstacle.hit", this, "obstacleHit");                   // collistion with obstacle
     },
@@ -63,6 +64,16 @@ Q.Sprite.extend("Player",
         }
     },
 
+    flip: function() {
+        if(this.p.landed > 0)
+        {
+            if(this.p.side == "upper")
+                this.turnDown();
+            else
+                this.turnUp();
+        } 
+    },
+
     floorHit: function(data) {
         this.p.landed = 1;
     },
@@ -71,6 +82,7 @@ Q.Sprite.extend("Player",
         Q.state.dec("lives", 1);
         if(Q.state.get("lives") > 0)
         {
+            Q.audio.play("hit.mp3", {volume: 0.6});
             this.p.x = (Q("Floor").at(2).p.x - Q("Floor").at(2).p.cx);
         }
     },
@@ -116,6 +128,10 @@ Q.Sprite.extend("Player",
         {
             this.destroy();                                             // character removal
             Q.stageScene("endGame", 1, { label: "You Lose!" });         // load new scene
+
+            // Save best score
+            if(Q.state.get("score") > Q.state.get("record"))
+                localStorage.setItem("record", Q.state.get("score"));
         }
 
         //this.stage.viewport.centerOn(this.p.x + 300, 400 );
@@ -131,8 +147,8 @@ Q.Sprite.extend("Floor",
     init: function(p) {
         this._super(p, {
             y: 500,
-            w: 390,
-            h: 21,
+            w: 500,
+            h: 20,
             type: Q.SPRITE_FLOOR
         });
 
@@ -168,24 +184,35 @@ Q.Sprite.extend("LittleObstacle",
 {
     init: function(p) {
         this._super(p, {
-            y: 460,
+            y: 440,
+            w: 120,
+            h: 140,
             type: Q.SPRITE_OBSTACLE,
-            asset: "little-obstacle.png",
-            points: [ [40, 30], [-40, 30], [-7, -40] ],
-            vx: 0,
-            vy: 0,
-            ay: 0
+            points: [ [55, 50], [-55, 50], [0, -70] ],
         });
 
         this.on("hit");
+    },
+
+    draw: function(ctx) {
+        ctx.beginPath();
+        ctx.moveTo(this.p.cx, this.p.cy - 10);
+        ctx.lineTo(this.p.cx - 10, this.p.cy - 10);
+        ctx.lineTo(0, -this.p.cy + 20);
+        ctx.lineTo(-this.p.cx + 10, this.p.cy - 10);
+        ctx.lineTo(-this.p.cx, this.p.cy - 10);
+
+        ctx.lineWidth = 20;
+        ctx.strokeStyle = "#FFF";
+        ctx.stroke();
     },
 
     step: function(dt) {
         // Change the "y" and "points" when the object is rotated
         if(this.p.flip == "y")
         {
-            this.p.y = 540; 
-            this.p.points = [ [40, -30], [-40, -30], [-7, 40] ];
+            this.p.y = 560; 
+            this.p.points = [ [55, -50], [-55, -50], [0, 70] ];
         }
 
         // Remove an object when it is off the screen
@@ -211,24 +238,35 @@ Q.Sprite.extend("BigObstacle",
 {
     init: function(p) {
         this._super(p, {
-            y: 372,
+            y: 340,
+            w: 140,
+            h: 340,
             type: Q.SPRITE_OBSTACLE,
-            asset: "big-obstacle.png",
-            points: [ [80, 120], [-80, 120], [-12, -130] ],
-            vx: 0,
-            vy: 0,
-            ay: 0,
+            points: [ [65, 150], [-65, 150], [0, -170] ]
         });
 
         this.on("hit");
+    },
+
+    draw: function(ctx) {
+        ctx.beginPath();
+        ctx.moveTo(this.p.cx, this.p.cy - 10);
+        ctx.lineTo(this.p.cx - 10, this.p.cy - 10);
+        ctx.lineTo(0, -this.p.cy + 40);
+        ctx.lineTo(-this.p.cx + 10, this.p.cy - 10);
+        ctx.lineTo(-this.p.cx, this.p.cy - 10);
+
+        ctx.lineWidth = 20;
+        ctx.strokeStyle = "#FFF";
+        ctx.stroke();
     },
 
     step: function(dt) {
         // Change the "y" and "points" when the object is rotated
         if(this.p.flip == "y")
         {
-            this.p.y = 629; 
-            this.p.points = [ [80, -120], [-80, -120], [-12, 130] ];
+            this.p.y = 660; 
+            this.p.points = [ [65, -150], [-65, -150], [0, 170] ];
         }
 
         // Remove an object when it is off the screen
