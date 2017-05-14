@@ -31,7 +31,7 @@ Q.scene("menu", function(stage)
     }));
 
     // Load game level on click
-    startButton.on("click", function() {
+    startButton.on("touch", function() {
         Q.clearStages();
         Q.stageScene("level");
     });
@@ -39,11 +39,11 @@ Q.scene("menu", function(stage)
     // Load game level on key down
     Q.input.on("up", function() {
         if(Q.stage().scene.name == "menu")
-            startButton.trigger("click");
+            startButton.trigger("touch");
     });
 
     // Change music option
-    musicButton.on("click", function() {
+    musicButton.on("touch", function() {
         if(musicButton.p.label.includes("ON"))
         {
             Q.state.set("music", false);
@@ -173,7 +173,7 @@ Q.scene("endGame", function(stage)
     }));
 
     // Reload game level on click
-    restartButton.on("click", function() {
+    restartButton.on("touch", function() {
         Q.clearStages();
         Q.stageScene("level");
     });
@@ -181,11 +181,11 @@ Q.scene("endGame", function(stage)
     // Reload game level on key down
     Q.input.on("up", function() {
         if(!Q.state.get("lives"))
-            restartButton.trigger("click");
+            restartButton.trigger("touch");
     });
 
     // Load game menu on click
-    menuButton.on("click", function() {
+    menuButton.on("touch", function() {
         Q.clearStages();
         Q.stageScene("menu");
     });
