@@ -14,16 +14,32 @@ Q.scene("menu", function(stage)
         x: Q.width/2, y: Q.height/2 + 110, fill: "rgba(0, 0, 0, 0)"
     }));
 
-    // Insert start button
-    var startButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 0, fill: "white", label: "Start Game", font: "400 24px Lato"
-    }));
+    if(Q.MOBILE)
+    {
+        // Insert start button
+        var startButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 0, w: 260, h: 70, fill: "white", label: "Start Game", font: "400 44px Lato"
+        }));
 
-    // Insert music button
-    if(Q.state.get("music") === undefined) Q.state.set("music", true);
-    var musicButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 15 + startButton.p.h, w: startButton.p.w, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 24px Lato"
-    }));
+        // Insert music button
+        if(Q.state.get("music") === undefined) Q.state.set("music", false);
+        var musicButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 15 + startButton.p.h, w: 260, h: 70, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 44px Lato"
+        }));
+    }
+    else
+    {
+        // Insert start button
+        var startButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 0, fill: "white", label: "Start Game", font: "400 24px Lato"
+        }));
+
+        // Insert music button
+        if(Q.state.get("music") === undefined) Q.state.set("music", true);
+        var musicButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 15 + startButton.p.h, w: startButton.p.w, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 24px Lato"
+        }));
+    }
 
     // Insert logo
     var logo = container.insert(new Q.UI.Button({ 
@@ -87,9 +103,12 @@ Q.scene("level", function(stage)
     }
 
     // Display info about keys
-    var keysInfo = stage.insert(new Q.UI.Text({
-        x: 990, y: 390, label: "Use [⇧]  /  [⇩] to FLIP  and  [____] to JUMP.", color: "white", family: "Lato"
-    }));
+    if(!Q.MOBILE)
+    {
+        var keysInfo = stage.insert(new Q.UI.Text({
+            x: 990, y: 390, label: "Use [⇧]  /  [⇩] to FLIP  and  [____] to JUMP.", color: "white", family: "Lato"
+        }));
+    }
 
     // Generate obstacles
     stage.insert(new Q.ObstacleGenerator());
@@ -160,16 +179,29 @@ Q.scene("endGame", function(stage)
         x: Q.width/2, y: Q.height/2, fill: "rgba(0, 0, 0, .3)"
     }));
 
-    var restartButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 0, fill: "white", label: "Play Again", font: "400 24px Lato"
-    }));
+    if(Q.MOBILE)
+    {
+        var restartButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 0, w: 260, h: 70, fill: "white", label: "Play Again", font: "400 44px Lato"
+        }));
 
-    var menuButton = container.insert(new Q.UI.Button({ 
-        x: 0, y: 10 + restartButton.p.h, w: restartButton.p.w, fill: "white", label: "Main Menu", font: "400 22px Lato"
-    }));
+        var menuButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 10 + restartButton.p.h, w: 260, h: 70, fill: "white", label: "Main Menu", font: "400 42px Lato"
+        }));
+    }
+    else
+    {   
+        var restartButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 0, fill: "white", label: "Play Again", font: "400 24px Lato"
+        }));
+
+        var menuButton = container.insert(new Q.UI.Button({ 
+            x: 0, y: 10 + restartButton.p.h, w: restartButton.p.w, fill: "white", label: "Main Menu", font: "400 24px Lato"
+        }));  
+    }
 
     var label = container.insert(new Q.UI.Text({
-        x: 0, y: -10 - restartButton.p.h, label: stage.options.label, family: "Lato", color: "white"
+        x: 0, y: -10 - restartButton.p.h, label: stage.options.label, size: Q.MOBILE?44:24, family: "Lato", color: "white"
     }));
 
     // Reload game level on click
