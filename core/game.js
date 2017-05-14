@@ -29,6 +29,15 @@ Q.input.keyboardControls({
     X:      "fire"
 });
 
+// Buttons on mobile devices
+Q.input.touchControls({
+    controls:   [['flip','F'],
+                [],
+                [],
+                [],
+                ['up','J']]
+});
+
 
 // Background colors
 Q.COLORS = {
@@ -50,7 +59,7 @@ Q.SPRITE_OBSTACLE = 8;
 // LOAD & LUNCH
 // =============================================================================
 
-Q.load("player.json, player.png, big-obstacle.png, little-obstacle.png, logo.png, loop.mp3, jump.mp3, flip.mp3",
+Q.load("player.json, player.png, logo.png, loop.mp3, jump.mp3, flip.mp3, hit.mp3",
 function()
 {
     // Player sprite sheet
