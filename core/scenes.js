@@ -144,7 +144,7 @@ Q.scene("hud", function(stage)
     if(Q.MOBILE)
     {
         var lives = leftContainer.insert(new Q.UI.Text({
-            x: 120, y: 60, label: hearts, color: "white", size: 120, family: "Lato"
+            x: 160, y: 60, label: hearts, color: "white", size: 120, family: "Lato"
         }));
     }
     else
@@ -166,7 +166,7 @@ Q.scene("hud", function(stage)
     if(Q.MOBILE)
     {
         var score = rightContainer.insert(new Q.UI.Text({
-            x: -50, y: 60, label: "SCORE: " + Q.zeroPad(Q.state.get("score"), 4), color: "white", family: "Lato", size: 60
+            x: -90, y: 60, label: "SCORE: " + Q.zeroPad(Q.state.get("score"), 4), color: "white", family: "Lato", size: 60
         }));
     }
     else
@@ -181,7 +181,7 @@ Q.scene("hud", function(stage)
     {
         if(typeof(Storage) !== "undefined") {
             var bestScore = rightContainer.insert(new Q.UI.Text({
-                x: -50, y: 120, label: "RECORD: " + Q.zeroPad(Q.state.get("record"), 4), color: "white", family: "Lato", size: 52, weight: 400
+                x: -90, y: 120, label: "RECORD: " + Q.zeroPad(Q.state.get("record"), 4), color: "white", family: "Lato", size: 52, weight: 400
             }));
         }
     }
