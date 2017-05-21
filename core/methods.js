@@ -31,4 +31,11 @@ Quintus.GameMethods = function(Q)
         return min + Math.random() * (max - min);
     }
 
+    Q.zeroPad = function(number, places)
+    {
+        var zero = places - number.toString().length + 1;
+        return Array(+(zero > 0 && zero)).join("0") + number;
+    }
+
+
 };
