@@ -48,7 +48,7 @@ Q.Sprite.extend("Player",
             Q.audio.play("flip.mp3");
             this.p.side = "upper"
             this.p.gravity = 1;
-            this.p.y = 380;
+            this.p.y = 385;
             this.p.points = [ [50, 100], [-23, 100], [-23, -108], [50, -108] ];
         }
     },
@@ -59,7 +59,7 @@ Q.Sprite.extend("Player",
             Q.audio.play("flip.mp3");
             this.p.side = "bottom";
             this.p.gravity = -1;
-            this.p.y = 630;
+            this.p.y = 620;
             this.p.points = [ [50, -100], [-23, -100], [-23, 108], [50, 108] ];
         }
     },
@@ -84,6 +84,16 @@ Q.Sprite.extend("Player",
         {
             Q.audio.play("hit.mp3", {volume: 0.6});
             this.p.x = (Q("Floor").at(2).p.x - Q("Floor").at(2).p.cx);
+
+            if(this.p.side == "upper")
+                this.p.y = 385;
+            else
+                this.p.y = 620;
+
+            Q.stageScene("counter", 1);
+            setTimeout(function() {
+                Q.stage().pause();
+            }, 100);
         }
     },
 
