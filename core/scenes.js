@@ -11,20 +11,20 @@ Q.scene("menu", function(stage)
 
     // Insert container
     var container = stage.insert(new Q.UI.Container({
-        x: Q.width/2, y: Q.height/2 + 110, fill: "rgba(0, 0, 0, 0)"
+        x: Q.width/2, y: Q.height/2 + 60, fill: "rgba(0, 0, 0, 0)"
     }));
 
     if(Q.MOBILE)
     {
         // Insert start button
         var startButton = container.insert(new Q.UI.Button({ 
-            x: 0, y: 0, w: 260, h: 70, radius: 0, fill: "white", label: "Start Game", font: "400 44px Lato"
+            x: 0, y: 0, w: 460, h: 120, radius: 0, fill: "white", label: "Start Game", font: "400 80px Lato"
         }));
 
         // Insert music button
         if(Q.state.get("music") === undefined) Q.state.set("music", false);
         var musicButton = container.insert(new Q.UI.Button({ 
-            x: 0, y: 15 + startButton.p.h, w: 260, h: 70, radius: 0, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 44px Lato"
+            x: 0, y: 25 + startButton.p.h, w: 460, h: 120, radius: 0, fill: "white", label: "Music: " + (Q.state.get("music")?"ON":"OFF"), font: "400 80px Lato"
         }));
     }
     else
@@ -120,7 +120,7 @@ Q.scene("level", function(stage)
     // Follow the player
     stage.add("viewport").follow(player);
     stage.viewport.offsetY = 100;
-    stage.viewport.offsetX = -500;
+    stage.viewport.offsetX = -Q.width/3;
 });
 
 // =============================================================================
@@ -141,9 +141,18 @@ Q.scene("hud", function(stage)
     }
 
     // Insert hearts
-    var lives = leftContainer.insert(new Q.UI.Text({
-        x: 50, y: 50, label: hearts, color: "white", size: 44, family: "Lato"
-    }));
+    if(Q.MOBILE)
+    {
+        var lives = leftContainer.insert(new Q.UI.Text({
+            x: 120, y: 60, label: hearts, color: "white", size: 120, family: "Lato"
+        }));
+    }
+    else
+    {
+        var lives = leftContainer.insert(new Q.UI.Text({
+            x: 50, y: 50, label: hearts, color: "white", size: 44, family: "Lato"
+        }));
+    }
 
     // Match content to container size + 20 margin units
     leftContainer.fit(20);
@@ -154,15 +163,35 @@ Q.scene("hud", function(stage)
     }));
 
     // Insert text with score value
-    var score = rightContainer.insert(new Q.UI.Text({
-        x: 50, y: 50, label: "SCORE: " + Q.zeroPad(Q.state.get("score"), 4), color: "white", family: "Lato"
-    }));
+    if(Q.MOBILE)
+    {
+        var score = rightContainer.insert(new Q.UI.Text({
+            x: -50, y: 60, label: "SCORE: " + Q.zeroPad(Q.state.get("score"), 4), color: "white", family: "Lato", size: 60
+        }));
+    }
+    else
+    {
+        var score = rightContainer.insert(new Q.UI.Text({
+            x: 50, y: 50, label: "SCORE: " + Q.zeroPad(Q.state.get("score"), 4), color: "white", family: "Lato"
+        }));   
+    }
 
     // Insert best score
-    if(typeof(Storage) !== "undefined") {
-        var bestScore = rightContainer.insert(new Q.UI.Text({
-            x: 50, y: 80, label: "RECORD: " + Q.zeroPad(Q.state.get("record"), 4), color: "white", family: "Lato", size: 21, weight: 400
-        }));
+    if(Q.MOBILE)
+    {
+        if(typeof(Storage) !== "undefined") {
+            var bestScore = rightContainer.insert(new Q.UI.Text({
+                x: -50, y: 120, label: "RECORD: " + Q.zeroPad(Q.state.get("record"), 4), color: "white", family: "Lato", size: 52, weight: 400
+            }));
+        }
+    }
+    else 
+    {
+        if(typeof(Storage) !== "undefined") {
+            var bestScore = rightContainer.insert(new Q.UI.Text({
+                x: 50, y: 80, label: "RECORD: " + Q.zeroPad(Q.state.get("record"), 4), color: "white", family: "Lato", size: 21, weight: 400
+            }));
+        }
     }
 
     // Match content to container size + 20 margin units
@@ -248,11 +277,11 @@ Q.scene("endGame", function(stage)
     if(Q.MOBILE)
     {
         var restartButton = container.insert(new Q.UI.Button({ 
-            x: 0, y: 0, w: 260, h: 70, radius: 0, fill: "white", label: "Play Again", font: "400 44px Lato"
+            x: 0, y: 0, w: 460, h: 120, radius: 0, fill: "white", label: "Play Again", font: "400 80px Lato"
         }));
 
         var menuButton = container.insert(new Q.UI.Button({ 
-            x: 0, y: 10 + restartButton.p.h, w: 260, h: 70, radius: 0, fill: "white", label: "Main Menu", font: "400 42px Lato"
+            x: 0, y: 25 + restartButton.p.h, w: 460, h: 120, radius: 0, fill: "white", label: "Main Menu", font: "400 76px Lato"
         }));
     }
     else
@@ -267,7 +296,7 @@ Q.scene("endGame", function(stage)
     }
 
     var label = container.insert(new Q.UI.Text({
-        x: 0, y: -10 - restartButton.p.h, label: stage.options.label, size: Q.MOBILE?44:24, family: "Lato", color: "white"
+        x: 0, y: -10 - restartButton.p.h, label: stage.options.label, size: Q.MOBILE?80:24, family: "Lato", color: "white"
     }));
 
     // Reload game level on click

@@ -15,7 +15,12 @@ window.addEventListener("load", function() {
 var Q = window.Q = Quintus({audioSupported: [ "mp3" ]})
         .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, Audio")
         .include("GameScenes, GameSprites, GameMethods")
-        .setup({ maximize: true })
+        .setup({ 
+            maximize: true,
+            scaleToFit: true,
+            upsampleWidth:  800,  // Double the pixel density of the 
+            upsampleHeight: 600,  // game if the w or h is 800x600
+        })
         .touch()
         .enableSound();
 
