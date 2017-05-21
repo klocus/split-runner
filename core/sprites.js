@@ -126,7 +126,7 @@ Q.Sprite.extend("Player",
 
         // Score
         Q.state.set("score", Math.round(this.p.x/100));
-        Q.stageScene("hud", 2);
+        Q.stageScene("hud", 3);
 
         // Get BG Color
         this.p.bgcolor = Q.score2color(Q.state.get("score"));           // score to color
@@ -137,7 +137,7 @@ Q.Sprite.extend("Player",
         if((this.p.y > Q.height*2) || (this.p.y < -Q.height) || (Q.state.get("lives") <= 0))
         {
             this.destroy();                                             // character removal
-            Q.stageScene("endGame", 1, { label: "You Lose!" });         // load new scene
+            Q.stageScene("endGame", 2, { label: "You Lose!" });         // load new scene
 
             // Save best score
             if(Q.state.get("score") > Q.state.get("record"))

@@ -93,7 +93,7 @@ Q.scene("level", function(stage)
         Q.audio.play("loop.mp3", { loop: true, volume: 0.4 });
 
     // Display HUD
-    Q.stageScene("hud", 2);
+    Q.stageScene("hud", 3);
 
     // Generate floor to run
     for (var i = 0; i < 5; i++)
